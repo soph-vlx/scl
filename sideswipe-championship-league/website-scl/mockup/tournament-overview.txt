@@ -1,0 +1,26 @@
+SCL Website Mockup - Overview for Toornament
+
+ This Mockup demonstrates how the public SCL website will present data synchronized from the Toornament API.
+ The structure is designed to be clean, fast, and mobile-friendly.
+ All that while we Staff, Teams and Viewers immediate access to:
+    1. League Standings
+    2. Mathc Schedules
+    3. Team overviews
+    4. Registration details
+ All critical data (participants, matches, standings, results) will be retrieved from Toornament
+ => once per matchday
+ The data will get stored in our internal Database
+
+ On this way we can ensure:
+    1. Minimal API Usage
+    2. Fast Website Loading
+    3. Stable Performance
+    4. Simple Caching Strategy
+    
+ The Mockup includes 5 core pages:
+    1. Home - introduction, league info, and Toornament attribution
+    2. Standings - full league table with match statistic
+    3. Matches - grouped by matchday, showing results and upcoming games 
+        => will get a dropdown menu to select older matchdays
+    4. Teams - overview of all participants
+    5. Register - Description on how to enter the event

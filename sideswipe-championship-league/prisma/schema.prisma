@@ -1,0 +1,355 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model GuildConfig {
+  id            String   @id @default(cuid())
+  guildId       String   @unique
+  autoroleId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model Warning {
+  id        String   @id @default(cuid())
+  guildId   String
+  userId    String
+  moderator String
+  reason    String
+  createdAt DateTime @default(now())
+}
+model Tournament {
+  id          Int               @id @default(autoincrement())
+  name        String
+  slug        String            @unique
+  season      String?
+  description String?
+  status      TournamentStatus  @default(PLANNED)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  teams       Team[]
+  matches     Match[]
+  standings   Standing[]
+}
+
+enum TournamentStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+}
+
+model Team {
+  id             Int        @id @default(autoincrement())
+  name           String
+  shortName      String?
+  tag            String?
+  logoUrl        String?
+  primaryColor   String?
+  secondaryColor String?
+
+  tournamentId   Int
+  tournament     Tournament @relation(fields: [tournamentId], references: [id])
+
+  players        Player[]
+  homeMatches    Match[]    @relation("HomeTeam")
+  awayMatches    Match[]    @relation("AwayTeam")
+  standings      Standing[]
+}
+
+model Player {
+  id          Int     @id @default(autoincrement())
+  displayName String
+  discordId   String? @unique
+  role        String?
+
+  teamId      Int
+  team        Team    @relation(fields: [teamId], references: [id])
+}
+
+model Match {
+  id            Int        @id @default(autoincrement())
+
+  tournamentId  Int
+  tournament    Tournament @relation(fields: [tournamentId], references: [id])
+
+  round         Int
+  matchDay      Int?
+
+  scheduledAt   DateTime?
+  status        MatchStatus @default(PLANNED)
+
+  homeTeamId    Int
+  awayTeamId    Int
+  homeTeam      Team       @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam      Team       @relation("AwayTeam", fields: [awayTeamId], references: [id])
+
+  scoreHome     Int?
+  scoreAway     Int?
+  reportedAt    DateTime?
+}
+
+enum MatchStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+}
+
+model Standing {
+  id           Int        @id @default(autoincrement())
+
+  tournamentId Int
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+
+  teamId       Int
+  team         Team       @relation(fields: [teamId], references: [id])
+
+  played       Int        @default(0)
+  wins         Int        @default(0)
+  draws        Int        @default(0)
+  losses       Int        @default(0)
+  goalsFor     Int        @default(0)
+  goalsAgainst Int        @default(0)
+  points       Int        @default(0)
+}
+
+/* ===========================================
+   SCL-SPECIFIC MODELS (REAL SYSTEM)
+   =========================================== */
+
+model SclTeam {
+  id                Int           @id @default(autoincrement())
+  name              String
+  shortName         String?
+  tag               String?
+  logoUrl           String?
+  region            String?
+  toornamentId      String?       @unique
+  discordRoleId     String?
+  discordChannelId  String?
+  basePlayerRoleId  String?
+  baseLeaderRoleId  String?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  players           SclPlayer[]
+  homeMatches       SclMatch[]    @relation("SclHomeTeam")
+  awayMatches       SclMatch[]    @relation("SclAwayTeam")
+  standing          SclStanding?
+  leaders           Leader[]
+  playerRoles       PlayerRole[]
+  accounts          AuthAccount[]
+  submitsAsTeam     MatchSubmit[] @relation("SubmitTeam")
+  submitsAsOpponent MatchSubmit[] @relation("SubmitOpponent")
+}
+
+model SclPlayer {
+  id          Int           @id @default(autoincrement())
+  discordId   String
+  displayName String
+  role        SclPlayerRole @default(PLAYER)
+
+  goals       Int           @default(0)
+  assists     Int           @default(0)
+  saves       Int           @default(0)
+  wins        Int           @default(0)
+  losses      Int           @default(0)
+
+  teamId      Int
+  team        SclTeam       @relation(fields: [teamId], references: [id])
+}
+
+enum SclPlayerRole {
+  PLAYER
+  LEADER
+  STAFF
+}
+
+model SclMatch {
+  id                Int             @id @default(autoincrement())
+  matchday          Int
+  homeTeamId        Int
+  awayTeamId        Int
+
+  homeTeam          SclTeam         @relation("SclHomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam          SclTeam         @relation("SclAwayTeam", fields: [awayTeamId], references: [id])
+
+  scheduledAt       DateTime?
+  status            SclMatchStatus  @default(PLANNED)
+
+  scoreHome         Int?
+  scoreAway         Int?
+
+  toornamentMatchId String?
+  reportedAt        DateTime?
+  
+  predictions       Prediction[]
+}
+
+enum SclMatchStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+}
+
+model SclStanding {
+  id               Int      @id @default(autoincrement())
+  teamId           Int      @unique
+  team             SclTeam  @relation(fields: [teamId], references: [id])
+
+  played           Int      @default(0)
+  wins             Int      @default(0)
+  draws            Int      @default(0)
+  losses           Int      @default(0)
+  goalsFor         Int      @default(0)
+  goalsAgainst     Int      @default(0)
+  points           Int      @default(0)
+  previousPosition Int?
+}
+
+/* ===========================================
+   PREDICTIONS USER SYSTEM (Legacy - kept for existing data)
+   =========================================== */
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String?      @unique
+  password    String
+  isAdmin     Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  
+  predictions Prediction[]
+}
+
+model Prediction {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  matchId         Int
+  predictedWinner String?
+  predictedScoreHome Int?
+  predictedScoreAway Int?
+  points          Int      @default(0)
+  createdAt       DateTime @default(now())
+  
+  user            User     @relation(fields: [userId], references: [id])
+  match           SclMatch @relation(fields: [matchId], references: [id])
+  
+  @@unique([userId, matchId])
+}
+
+/* ===========================================
+   UNIFIED AUTH ACCOUNT SYSTEM (New)
+   =========================================== */
+
+enum AccountRole {
+  VIEWER
+  PLAYER
+  LEADER
+  STAFF
+  ADMIN
+}
+
+model AuthAccount {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String?      @unique
+  password    String
+  role        AccountRole  @default(VIEWER)
+  teamId      Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lastLogin   DateTime?
+  
+  team        SclTeam?     @relation(fields: [teamId], references: [id])
+  submits     MatchSubmit[]
+}
+
+model DiscordWebhook {
+  id          Int               @id @default(autoincrement())
+  name        String
+  type        WebhookType       @unique
+  webhookUrl  String
+  enabled     Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+}
+
+enum WebhookType {
+  MATCH_UPDATES
+  STANDINGS
+  MATCHDAY_SCHEDULE
+}
+
+/* ===========================================
+   DISCORD BOT SPECIFIC MODELS
+   =========================================== */
+
+model Leader {
+  id          Int      @id @default(autoincrement())
+  name        String
+  discordId   String
+  roleId      String
+  teamId      Int
+  team        SclTeam  @relation(fields: [teamId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model LeaderRole {
+  id          Int      @id @default(autoincrement())
+  name        String
+  roleId      String
+  createdAt   DateTime @default(now())
+}
+
+model PlayerRole {
+  id          Int      @id @default(autoincrement())
+  name        String
+  roleId      String
+  teamId      Int
+  team        SclTeam  @relation(fields: [teamId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model MatchScreenshot {
+  id           Int      @id @default(autoincrement())
+  homeTeam     String
+  opponentTeam String
+  matchday     Int
+
+  game1        String
+  game2        String
+  game3        String
+  game4        String
+  game5        String
+
+  uploaderId   String
+  processed    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+/* ===========================================
+   MATCH SUBMIT PORTAL
+   =========================================== */
+
+model MatchSubmit {
+  id             Int       @id @default(autoincrement())
+  imageData      String
+  submitterId    Int
+  teamId         Int
+  opponentTeamId Int?
+  matchday       Int
+  gameNumber     Int
+  processed      Boolean   @default(false)
+  ocrResult      String?
+  ocrProcessedAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  submitter      AuthAccount @relation(fields: [submitterId], references: [id])
+  team           SclTeam     @relation("SubmitTeam", fields: [teamId], references: [id])
+  opponentTeam   SclTeam?    @relation("SubmitOpponent", fields: [opponentTeamId], references: [id])
+}

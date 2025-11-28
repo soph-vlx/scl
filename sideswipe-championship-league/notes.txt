@@ -1,0 +1,32 @@
+Notes for this project:
+
+SCL:
+1. Website:
+    - Discord Server links 
+    - Register Site überarbeiten damit alles passt
+    - PricePool zur Homepage hinzufügen 
+    - SCL Logo hinzufügen
+    - Logos für jedes team hinzufügen
+    - Mehr Farbe in die website integrieren
+    - Stats für alles schneller reloaden
+    - Alle Teams eintragen
+    - Alle Matches eintragen
+    - ReadMe updaten
+    - update footer - use br instead of p
+    - get the footer to the bottom
+2. Bot:
+    - Alle commands die der Bot brauchen wird erstellen
+
+VLX:
+1. Team website 
+
+
+
+
+SCL Website generell komplett überarbeiten damit nirgendswo fehler sind
+
+
+
+
+team seite neu  machen
+matches anschauen

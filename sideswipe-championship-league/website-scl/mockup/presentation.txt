@@ -1,0 +1,25 @@
+SCL x Toornament – Data Flow Overview
+
+ Toornament (API)
+        │
+        ▼
+ [Bot Sync Command]  — Fetch participants (1 call)
+                    — Fetch match structure (1 call)
+        │
+        ▼
+ Local Database (Teams / Matches / Standings)
+        │
+        ├── Bot Commands
+        ├── SCL Website
+        └── Score Submissions (Batch PATCH per matchday to Toornament)
+ 
+ API call Summary
+    1 call: get participants
+    1 call: get matches
+
+    31 calls: Patch mathc result (one batch per matchday)
+
+ Display Model  
+    Websites reads from local Database
+    Standings updated after result sync
+    Fast, Stable, low-load integration

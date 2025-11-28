@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCL – Create Account</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Create your SCL account to access predictions, match submissions, and more.">
+    <meta name="theme-color" content="#6c5ce7">
+    <meta property="og:title" content="SCL – Create Account">
+    <meta property="og:description" content="Join the Sideswipe Championship League community.">
+    <meta property="og:image" content="assets/scl-logo.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/png" href="assets/scl-logo.png">
+    <style>
+        .register-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .auth-card {
+            background: #131826;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .auth-card h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .auth-card .subtitle {
+            text-align: center;
+            color: #a0a0a0;
+            margin-bottom: 25px;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: #1c2333;
+            color: #e6e6e6;
+            border: 2px solid #2a2f42;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .auth-tab:hover {
+            background: #252d43;
+            border-color: #6c5ce7;
+        }
+        .auth-tab.active {
+            background: #6c5ce7;
+            border-color: #6c5ce7;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e6e6e6;
+        }
+        .form-group label .optional {
+            font-weight: 400;
+            color: #888;
+            font-size: 13px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: #1c2333;
+            border: 1px solid #2a2f42;
+            border-radius: 6px;
+            color: #e6e6e6;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .role-option {
+            flex: 1;
+            padding: 15px 10px;
+            background: #1c2333;
+            border: 2px solid #2a2f42;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .role-option:hover {
+            background: #252d43;
+            border-color: #6c5ce7;
+        }
+        .role-option.selected {
+            background: rgba(108, 92, 231, 0.15);
+            border-color: #6c5ce7;
+        }
+        .role-option i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #6c5ce7;
+            display: block;
+        }
+        .role-option .role-name {
+            font-weight: 600;
+            color: #e6e6e6;
+            margin-bottom: 4px;
+        }
+        .role-option .role-desc {
+            font-size: 12px;
+            color: #888;
+        }
+        .team-select-group {
+            display: none;
+        }
+        .team-select-group.visible {
+            display: block;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+        }
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error-message {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .success-message {
+            background: rgba(0, 206, 201, 0.15);
+            color: #00cec9;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #a0a0a0;
+        }
+        .login-link a {
+            color: #6c5ce7;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .info-box {
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .info-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #a29bfe;
+        }
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 13px;
+            color: #a0a0a0;
+        }
+        .info-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <header class="top-bar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="hamburger-btn" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="/"><img src="assets/scl-logo.png" alt="SCL" class="logo-img"></a>
+            <a href="/" class="league-name"><span class="full-name">Sideswipe Championship League</span><span class="short-name">SCL</span></a>
+            <a href="/admin" class="admin-shield" title="Admin Dashboard" style="display: none;"><i class="fas fa-shield-halved"></i></a>
+        </div>
+        <div class="top-bar-right" id="top-bar-auth">
+            <a href="/login" class="login-btn">Login</a>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <ul class="sidebar-nav">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/standings"><i class="fas fa-trophy"></i> Standings</a></li>
+            <li><a href="/matches"><i class="fas fa-calendar-alt"></i> Matches</a></li>
+            <li><a href="/teams"><i class="fas fa-users"></i> Teams</a></li>
+            <li><a href="/leaderboard"><i class="fas fa-medal"></i> Leaderboard</a></li>
+            <li class="sidebar-divider"></li>
+            <li><a href="/predictions"><i class="fas fa-chart-line"></i> Predictions</a></li>
+            <li><a href="/submit"><i class="fas fa-upload"></i> Submit</a></li>
+            <li class="sidebar-divider"></li>
+            <li><a href="/admin"><i class="fas fa-shield-halved"></i> Admin</a></li>
+        </ul>
+    </aside>
+    <div class="sidebar-overlay"></div>
+
+    <script src="js/auth-nav.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+        <div class="register-container">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="register">Create Account</div>
+                    <div class="auth-tab" data-tab="login">Login</div>
+                </div>
+
+                <div id="error-message" class="error-message"></div>
+                <div id="success-message" class="success-message"></div>
+
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>I am a...</label>
+                        <div class="role-selector">
+                            <div class="role-option selected" data-role="VIEWER">
+                                <i class="fas fa-eye"></i>
+                                <div class="role-name">Viewer</div>
+                                <div class="role-desc">Follow matches & predict</div>
+                            </div>
+                            <div class="role-option" data-role="PLAYER">
+                                <i class="fas fa-gamepad"></i>
+                                <div class="role-name">Player</div>
+                                <div class="role-desc">Compete in SCL</div>
+                            </div>
+                            <div class="role-option" data-role="LEADER">
+                                <i class="fas fa-crown"></i>
+                                <div class="role-name">Leader</div>
+                                <div class="role-desc">Manage your team</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="role" name="role" value="VIEWER">
+                    </div>
+
+                    <div id="team-select-group" class="form-group team-select-group">
+                        <label for="teamId">Select Your Team</label>
+                        <select id="teamId" name="teamId">
+                            <option value="">Loading teams...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="optional">(optional)</span></label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+
+                <form id="login-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" name="username" placeholder="Your username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" name="password" placeholder="Your password" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i> Account Benefits</h3>
+                    <ul>
+                        <li><strong>Viewers:</strong> Make match predictions and track your score</li>
+                        <li><strong>Players:</strong> Submit match screenshots for your team</li>
+                        <li><strong>Leaders:</strong> Manage team submissions and view stats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <p>Sideswipe Championship League • Season 1</p>
+                <p>Hosted by VELOX • Powered by Toornament</p>
+                <div class="social-links">
+                    <a href="https://discord.gg/TmxsYm5eb9" target="_blank" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.tiktok.com/@rls.championship?_r=1&_t=ZT-91d8YmYiRy3" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+<script>
+const API_BASE = '/api';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadTeams();
+    setupTabs();
+    setupRoleSelector();
+    setupForms();
+    checkExistingAuth();
+});
+
+async function loadTeams() {
+    try {
+        const response = await fetch(`${API_BASE}/teams`);
+        const teams = await response.json();
+        const select = document.getElementById('teamId');
+        select.innerHTML = '<option value="">-- Select your team --</option>';
+        teams.forEach(team => {
+            const option = document.createElement('option');
+            option.value = team.id;
+            option.textContent = team.name;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Error loading teams:', err);
+    }
+}
+
+function setupTabs() {
+    const tabs = document.querySelectorAll('.auth-tab');
+    const registerForm = document.getElementById('register-form');
+    const loginForm = document.getElementById('login-form');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            if (tab.dataset.tab === 'register') {
+                registerForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            } else {
+                registerForm.style.display = 'none';
+                loginForm.style.display = 'block';
+            }
+            hideMessages();
+        });
+    });
+}
+
+function setupRoleSelector() {
+    const roleOptions = document.querySelectorAll('.role-option');
+    const roleInput = document.getElementById('role');
+    const teamGroup = document.getElementById('team-select-group');
+    const teamSelect = document.getElementById('teamId');
+
+    roleOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            roleOptions.forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+            roleInput.value = option.dataset.role;
+
+            if (['PLAYER', 'LEADER'].includes(option.dataset.role)) {
+                teamGroup.classList.add('visible');
+                teamSelect.required = true;
+            } else {
+                teamGroup.classList.remove('visible');
+                teamSelect.required = false;
+            }
+        });
+    });
+}
+
+function setupForms() {
+    document.getElementById('register-form').addEventListener('submit', handleRegister);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    hideMessages();
+
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+        showError('Passwords do not match');
+        return;
+    }
+
+    const formData = {
+        username: document.getElementById('username').value.trim(),
+        email: document.getElementById('email').value.trim() || null,
+        password: password,
+        role: document.getElementById('role').value,
+        teamId: document.getElementById('teamId').value || null
+    };
+
+    if (['PLAYER', 'LEADER'].includes(formData.role) && !formData.teamId) {
+        showError('Please select your team');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Registration failed');
+        }
+
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authUser', JSON.stringify({
+            id: data.id,
+            username: data.username,
+            role: data.role,
+            teamId: data.teamId,
+            teamName: data.teamName
+        }));
+
+        showSuccess('Account created successfully! Redirecting...');
+        setTimeout(() => {
+            if (['PLAYER', 'LEADER'].includes(data.role)) {
+                window.location.href = '/submit';
+            } else {
+                window.location.href = '/predictions';
+            }
+        }, 1500);
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    hideMessages();
+
+    const formData = {
+        username: document.getElementById('login-username').value.trim(),
+        password: document.getElementById('login-password').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Login failed');
+        }
+
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authUser', JSON.stringify({
+            id: data.id,
+            username: data.username,
+            role: data.role,
+            teamId: data.teamId,
+            teamName: data.teamName,
+            isAdmin: data.isAdmin
+        }));
+
+        showSuccess('Login successful! Redirecting...');
+        setTimeout(() => {
+            if (data.isAdmin) {
+                window.location.href = '/admin';
+            } else if (['PLAYER', 'LEADER'].includes(data.role)) {
+                window.location.href = '/submit';
+            } else {
+                window.location.href = '/predictions';
+            }
+        }, 1000);
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+function checkExistingAuth() {
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('authUser');
+    
+    if (token && user) {
+        const userData = JSON.parse(user);
+        showSuccess(`Already logged in as ${userData.username}. Redirecting...`);
+        setTimeout(() => {
+            if (userData.isAdmin) {
+                window.location.href = '/admin';
+            } else if (['PLAYER', 'LEADER'].includes(userData.role)) {
+                window.location.href = '/submit';
+            } else {
+                window.location.href = '/predictions';
+            }
+        }, 1500);
+    }
+}
+
+function showError(message) {
+    const el = document.getElementById('error-message');
+    el.textContent = message;
+    el.style.display = 'block';
+}
+
+function showSuccess(message) {
+    const el = document.getElementById('success-message');
+    el.textContent = message;
+    el.style.display = 'block';
+}
+
+function hideMessages() {
+    document.getElementById('error-message').style.display = 'none';
+    document.getElementById('success-message').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

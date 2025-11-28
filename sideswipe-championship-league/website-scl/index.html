@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SCL – Home</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <meta
+            name="description"
+            content="Sideswipe Championship League — Official standings, match schedules, teams, and results. Powered by VELOX."
+        />
+        <meta name="theme-color" content="#6c5ce7" />
+
+        <!-- For Discord & social media embeds -->
+        <meta property="og:title" content="Sideswipe Championship League" />
+        <meta
+            property="og:description"
+            content="Official SCL standings, match schedule, teams, and more. Hosted by VELOX."
+        />
+        <meta property="og:image" content="assets/scl-logo.png" />
+        <meta property="og:type" content="website" />
+        <link rel="icon" type="image/png" href="assets/scl-logo.png" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+
+    <body>
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="/"><img src="assets/scl-logo.png" alt="SCL" class="logo-img"></a>
+                <a href="/" class="league-name"><span class="full-name">Sideswipe Championship League</span><span class="short-name">SCL</span></a>
+                <a href="/admin" class="admin-shield" title="Admin Dashboard" style="display: none;"><i class="fas fa-shield-halved"></i></a>
+            </div>
+            <div class="top-bar-right" id="top-bar-auth">
+                <a href="/login" class="login-btn">Login</a>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/standings"><i class="fas fa-trophy"></i> Standings</a></li>
+                <li><a href="/matches"><i class="fas fa-calendar-alt"></i> Matches</a></li>
+                <li><a href="/teams"><i class="fas fa-users"></i> Teams</a></li>
+                <li><a href="/leaderboard"><i class="fas fa-medal"></i> Leaderboard</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/predictions"><i class="fas fa-chart-line"></i> Predictions</a></li>
+                <li><a href="/submit"><i class="fas fa-upload"></i> Submit</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/admin"><i class="fas fa-shield-halved"></i> Admin</a></li>
+            </ul>
+        </aside>
+        <div class="sidebar-overlay"></div>
+
+        <script src="js/auth-nav.js"></script>
+        <script src="js/sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-wrapper">
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <div class="hero-title">Sideswipe Championship League</div>
+            <div class="hero-sub">
+                Season 1 • 32 Teams • Start in January 2026<br />
+                $350 Prize Pool
+            </div>
+
+            <div class="hero-buttons">
+                <a class="button" href="/standings">View Standings</a>
+                <a class="button" href="/matches">Match Schedule</a>
+                <a class="button" href="/teams">Teams</a>
+            </div>
+
+            <div class="hero-buttons" style="margin-top: 15px">
+                <a class="button" href="/leaderboard">Player Leaderboard</a>
+                <a class="button" href="/predictions">Match Predictions</a>
+            </div>
+
+            <div class="season-info">
+                Official league hosted by
+                <a id="Velox Website" href="https://discord.gg/velox">VELOX Esports</a>.<br>
+                Powered by <a id="Toornament Website" href="https://toornament.com">Toornament</a>.
+            </div>
+        </div>
+        <div class="page-container">
+            <div class="toornament-block">
+                <h2>Powered by Toornament</h2>
+                <p>
+                    SCL uses the Toornament API for participant management, match structure,
+                    and official standings synchronization.
+                </p>
+            </div>
+        </div>
+
+
+        <footer id="index-footer" class="bottom-footer">
+            <div class="footer-content">
+                <p>Sideswipe Championship League • Season 1</p>
+                <p>Hosted by VELOX • Powered by Toornament</p>
+                <div class="social-links">
+                    <a
+                        href="https://discord.gg/TmxsYm5eb9"
+                        target="_blank"
+                        aria-label="Discord"
+                        ><i class="fab fa-discord"></i
+                    ></a>
+                    <a
+                        href="https://www.tiktok.com/@rls.championship?_r=1&_t=ZT-91d8YmYiRy3"
+                        target="_blank"
+                        aria-label="TikTok"
+                        ><i class="fab fa-tiktok"></i
+                    ></a>
+                    <!-- <a href="https://instagram.com/veloxesports" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a> -->
+                    <!-- <a href="https://youtube.com/@veloxesports" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a> -->
+                </div>
+            </div>
+        </footer>
+        </main>
+        <script src="js/main.js"></script>
+    </body>
+</html>

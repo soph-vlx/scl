@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SCL – Match Predictions</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <meta
+            name="description"
+            content="Predict match outcomes and compete for points"
+        />
+        <meta name="theme-color" content="#6c5ce7" />
+        <link rel="icon" type="image/png" href="assets/scl-logo.png" />
+        <style>
+            .login-prompt {
+                background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(162, 155, 254, 0.1));
+                border: 2px solid #6c5ce7;
+                border-radius: 12px;
+                padding: 25px;
+                text-align: center;
+                margin: 20px 0;
+            }
+            .login-prompt h3 {
+                margin: 0 0 10px 0;
+                color: #a29bfe;
+            }
+            .login-prompt p {
+                color: #a0a0a0;
+                margin-bottom: 15px;
+            }
+            .login-prompt .login-btn {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: 0.3s;
+            }
+            .login-prompt .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+            }
+            .match-preview-card {
+                background: #131826;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 15px;
+                border: 1px solid #2a2f42;
+            }
+            .match-preview-card h3 {
+                margin: 0 0 8px 0;
+                color: #e6e6e6;
+            }
+            .match-preview-card .match-info {
+                color: #a0a0a0;
+                font-size: 14px;
+            }
+            .user-welcome {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: rgba(108, 92, 231, 0.1);
+                border: 1px solid rgba(108, 92, 231, 0.3);
+                border-radius: 8px;
+                padding: 12px 20px;
+                margin-bottom: 20px;
+            }
+            .user-welcome span {
+                color: #a29bfe;
+                font-weight: 500;
+            }
+            .user-welcome .logout-btn {
+                padding: 8px 16px;
+                background: transparent;
+                border: 1px solid #ff6b6b;
+                color: #ff6b6b;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: 0.3s;
+            }
+            .user-welcome .logout-btn:hover {
+                background: rgba(255, 107, 107, 0.15);
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="/"><img src="assets/scl-logo.png" alt="SCL" class="logo-img"></a>
+                <a href="/" class="league-name"><span class="full-name">Sideswipe Championship League</span><span class="short-name">SCL</span></a>
+                <a href="/admin" class="admin-shield" title="Admin Dashboard" style="display: none;"><i class="fas fa-shield-halved"></i></a>
+            </div>
+            <div class="top-bar-right" id="top-bar-auth">
+                <a href="/login" class="login-btn">Login</a>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/standings"><i class="fas fa-trophy"></i> Standings</a></li>
+                <li><a href="/matches"><i class="fas fa-calendar-alt"></i> Matches</a></li>
+                <li><a href="/teams"><i class="fas fa-users"></i> Teams</a></li>
+                <li><a href="/leaderboard"><i class="fas fa-medal"></i> Leaderboard</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/predictions"><i class="fas fa-chart-line"></i> Predictions</a></li>
+                <li><a href="/submit"><i class="fas fa-upload"></i> Submit</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/admin"><i class="fas fa-shield-halved"></i> Admin</a></li>
+            </ul>
+        </aside>
+        <div class="sidebar-overlay"></div>
+
+        <script src="js/auth-nav.js"></script>
+        <script src="js/sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-wrapper">
+            <div class="page-container">
+                <h1>Match Predictions</h1>
+
+                <div id="user-welcome-section" class="user-welcome" style="display: none;">
+                    <span id="username-display"></span>
+                    <button onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+
+                <div class="predictions-tabs">
+                    <button
+                        class="tab-btn active"
+                        onclick="showTab('upcoming')"
+                    >
+                        Upcoming Matches
+                    </button>
+                    <button class="tab-btn" onclick="showTab('my-predictions')" id="my-predictions-tab">
+                        My Predictions
+                    </button>
+                    <button class="tab-btn" onclick="showTab('leaderboard')">
+                        Leaderboard
+                    </button>
+                </div>
+
+                <div id="tab-upcoming" class="tab-content">
+                    <h2>Upcoming Matches</h2>
+                    
+                    <div id="login-prompt-upcoming" class="login-prompt" style="display: none;">
+                        <h3><i class="fas fa-lock"></i> Login to Make Predictions</h3>
+                        <p>Create an account or login to predict match outcomes and compete for points!</p>
+                        <a href="/login" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login or Create Account</a>
+                    </div>
+                    
+                    <div id="upcoming-matches">Loading...</div>
+                </div>
+
+                <div
+                    id="tab-my-predictions"
+                    class="tab-content"
+                    style="display: none"
+                >
+                    <h2>My Predictions</h2>
+                    <div id="my-predictions">
+                        <div class="login-prompt">
+                            <h3><i class="fas fa-lock"></i> Login Required</h3>
+                            <p>You need to be logged in to view your predictions.</p>
+                            <a href="/login" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login or Create Account</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    id="tab-leaderboard"
+                    class="tab-content"
+                    style="display: none"
+                >
+                    <h2>Predictions Leaderboard</h2>
+                    <table class="standings-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>User</th>
+                                <th>Total Points</th>
+                                <th>Predictions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictions-leaderboard-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <footer>
+                <div class="footer-content">
+                    <p>Sideswipe Championship League • Season 1</p>
+                    <p>Hosted by VELOX • Powered by Toornament</p>
+                    <div class="social-links">
+                        <a
+                            href="https://discord.gg/TmxsYm5eb9"
+                            target="_blank"
+                            aria-label="Discord"
+                            ><i class="fab fa-discord"></i
+                        ></a>
+                        <a
+                            href="https://www.tiktok.com/@rls.championship?_r=1&_t=ZT-91d8YmYiRy3"
+                            target="_blank"
+                            aria-label="TikTok"
+                            ><i class="fab fa-tiktok"></i
+                        ></a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+
+        <script src="js/predictions.js"></script>
+    </body>
+</html>

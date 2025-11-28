@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SCL – Admin Dashboard</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <meta name="description" content="SCL Admin Dashboard" />
+        <meta name="theme-color" content="#6c5ce7" />
+        <link rel="icon" type="image/png" href="assets/scl-logo.png" />
+    </head>
+
+    <body>
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="/"><img src="assets/scl-logo.png" alt="SCL" class="logo-img"></a>
+                <a href="/" class="league-name"><span class="full-name">Sideswipe Championship League</span><span class="short-name">SCL</span></a>
+                <a href="/admin" class="admin-shield active" title="Admin Dashboard" style="display: none;"><i class="fas fa-shield-halved"></i></a>
+            </div>
+            <div class="top-bar-right" id="top-bar-auth">
+                <a href="/login" class="login-btn">Login</a>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/standings"><i class="fas fa-trophy"></i> Standings</a></li>
+                <li><a href="/matches"><i class="fas fa-calendar-alt"></i> Matches</a></li>
+                <li><a href="/teams"><i class="fas fa-users"></i> Teams</a></li>
+                <li><a href="/leaderboard"><i class="fas fa-medal"></i> Leaderboard</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/predictions"><i class="fas fa-chart-line"></i> Predictions</a></li>
+                <li><a href="/submit"><i class="fas fa-upload"></i> Submit</a></li>
+                <li class="sidebar-divider"></li>
+                <li><a href="/admin"><i class="fas fa-shield-halved"></i> Admin</a></li>
+            </ul>
+        </aside>
+        <div class="sidebar-overlay"></div>
+
+        <script src="js/auth-nav.js"></script>
+        <script src="js/sidebar.js"></script>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-wrapper">
+            <div class="page-container">
+                <h1>Admin Dashboard</h1>
+
+                <div id="admin-auth" class="auth-section">
+                    <div class="auth-form">
+                        <h2>Admin Login</h2>
+                        <input
+                            type="text"
+                            id="admin-username"
+                            placeholder="Username"
+                        />
+                        <input
+                            type="password"
+                            id="admin-password"
+                            placeholder="Password"
+                        />
+                        <button onclick="adminLogin()">Login</button>
+                    </div>
+                </div>
+
+                <div id="admin-content" style="display: none">
+                    <div class="user-info">
+                        <span id="admin-username-display"></span>
+                        <button onclick="adminLogout()" class="logout-btn">
+                            Logout
+                        </button>
+                    </div>
+
+                    <div class="admin-tabs">
+                        <button
+                            class="tab-btn active"
+                            onclick="showAdminTab('matches')"
+                        >
+                            Match Scores
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('teams')">
+                            Teams
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('players')">
+                            Players
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('users')">
+                            Users
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('submissions')">
+                            Submissions
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('ocr-review')">
+                            OCR Review
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('webhooks')">
+                            Discord Webhook
+                        </button>
+                        <button class="tab-btn" onclick="showAdminTab('toornament')">
+                            Toornament
+                        </button>
+                    </div>
+
+                    <div id="admin-tab-matches" class="tab-content">
+                        <h2>Update Match Scores</h2>
+                        <div class="filter-controls">
+                            <select id="matchday-filter" onchange="filterMatches()">
+                                <option value="">All Matchdays</option>
+                            </select>
+                        </div>
+                        <div id="matches-list">Loading...</div>
+                    </div>
+
+                    <div
+                        id="admin-tab-teams"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Manage Teams</h2>
+                        <button onclick="showTeamForm()" class="add-btn">
+                            Add New Team
+                        </button>
+                        <div id="teams-list">Loading...</div>
+                    </div>
+
+                    <div
+                        id="admin-tab-players"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Manage Players</h2>
+                        <div class="filter-controls">
+                            <select id="team-filter" onchange="filterPlayers()">
+                                <option value="">All Teams</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="player-search" 
+                                placeholder="Search players..." 
+                                oninput="filterPlayers()"
+                            />
+                        </div>
+                        <button onclick="showPlayerForm()" class="add-btn">
+                            Add New Player
+                        </button>
+                        <div id="players-list">Loading...</div>
+                    </div>
+
+                    <div
+                        id="admin-tab-users"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Manage Users</h2>
+                        <p class="webhook-info">Manage registered user accounts and their roles</p>
+                        <div class="filter-controls">
+                            <select id="user-role-filter" onchange="loadAdminUsers()">
+                                <option value="">All Roles</option>
+                                <option value="ADMIN">Admin</option>
+                                <option value="STAFF">Staff</option>
+                                <option value="LEADER">Leader</option>
+                                <option value="PLAYER">Player</option>
+                                <option value="VIEWER">Viewer</option>
+                            </select>
+                            <select id="user-team-filter" onchange="loadAdminUsers()">
+                                <option value="">All Teams</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="user-search" 
+                                placeholder="Search users..." 
+                                oninput="loadAdminUsers()"
+                            />
+                        </div>
+                        <div id="users-list">Loading...</div>
+                    </div>
+
+                    <div
+                        id="admin-tab-submissions"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Match Submissions</h2>
+                        <p class="webhook-info">Review match screenshot submissions from team members</p>
+                        <div class="filter-controls">
+                            <select id="submissions-team-filter" onchange="loadAdminSubmissions()">
+                                <option value="">All Teams</option>
+                            </select>
+                            <select id="submissions-status-filter" onchange="loadAdminSubmissions()">
+                                <option value="">All Status</option>
+                                <option value="false">Pending</option>
+                                <option value="true">Processed</option>
+                            </select>
+                        </div>
+                        <div id="submissions-list">Loading...</div>
+                    </div>
+
+                    <div
+                        id="admin-tab-ocr-review"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>OCR Review</h2>
+                        <p class="webhook-info">Review and approve match results extracted from submitted screenshots</p>
+                        
+                        <div class="ocr-controls">
+                            <h3>Process New Submissions</h3>
+                            <div class="ocr-process-form">
+                                <select id="ocr-team-select">
+                                    <option value="">Select Team</option>
+                                </select>
+                                <input 
+                                    type="number" 
+                                    id="ocr-matchday" 
+                                    placeholder="Matchday" 
+                                    min="1" 
+                                    max="31"
+                                />
+                                <button onclick="processOcrMatchday()" class="add-btn">
+                                    <i class="fas fa-cog"></i> Process OCR
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ocr-pending-section">
+                            <h3>Pending Review</h3>
+                            <button onclick="loadPendingOcrReviews()" class="add-btn" style="margin-bottom: 15px;">
+                                <i class="fas fa-sync"></i> Refresh Pending Reviews
+                            </button>
+                            <div id="ocr-pending-list">No pending reviews</div>
+                        </div>
+                        
+                        <div class="ocr-all-submissions-section">
+                            <h3>All Submissions</h3>
+                            <div class="filter-controls">
+                                <select id="ocr-filter-team" onchange="loadAllSubmissions()">
+                                    <option value="">All Teams</option>
+                                </select>
+                                <select id="ocr-filter-processed" onchange="loadAllSubmissions()">
+                                    <option value="">All Status</option>
+                                    <option value="false">Unprocessed</option>
+                                    <option value="true">Processed</option>
+                                </select>
+                            </div>
+                            <div id="ocr-submissions-list">Loading...</div>
+                        </div>
+                    </div>
+
+                    <div
+                        id="admin-tab-webhooks"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Discord Webhook Configuration</h2>
+                        <p class="webhook-info">Configure separate webhook URLs for each notification type</p>
+                        
+                        <div class="webhook-config-section">
+                            <h3>🏆 Match Updates Webhook</h3>
+                            <p class="webhook-desc">Sends notifications when match scores are updated</p>
+                            <div class="webhook-form">
+                                <label>Webhook Name:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-match-name"
+                                    placeholder="Match Updates"
+                                />
+
+                                <label>Webhook URL:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-match-url"
+                                    placeholder="https://discord.com/api/webhooks/..."
+                                />
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        id="webhook-match-enabled"
+                                        checked
+                                    />
+                                    Enabled
+                                </label>
+
+                                <button onclick="saveWebhookByType('MATCH_UPDATES')">Save Match Updates Webhook</button>
+                            </div>
+                        </div>
+                        
+                        <div class="webhook-config-section">
+                            <h3>📊 Standings Webhook</h3>
+                            <p class="webhook-desc">For manually sending standings tables to Discord</p>
+                            <div class="webhook-form">
+                                <label>Webhook Name:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-standings-name"
+                                    placeholder="Standings Updates"
+                                />
+
+                                <label>Webhook URL:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-standings-url"
+                                    placeholder="https://discord.com/api/webhooks/..."
+                                />
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        id="webhook-standings-enabled"
+                                        checked
+                                    />
+                                    Enabled
+                                </label>
+
+                                <button onclick="saveWebhookByType('STANDINGS')">Save Standings Webhook</button>
+                            </div>
+                        </div>
+                        
+                        <div class="webhook-config-section">
+                            <h3>📅 Matchday Schedule Webhook</h3>
+                            <p class="webhook-desc">For manually sending matchday schedules to Discord</p>
+                            <div class="webhook-form">
+                                <label>Webhook Name:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-schedule-name"
+                                    placeholder="Schedule Updates"
+                                />
+
+                                <label>Webhook URL:</label>
+                                <input
+                                    type="text"
+                                    id="webhook-schedule-url"
+                                    placeholder="https://discord.com/api/webhooks/..."
+                                />
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        id="webhook-schedule-enabled"
+                                        checked
+                                    />
+                                    Enabled
+                                </label>
+
+                                <button onclick="saveWebhookByType('MATCHDAY_SCHEDULE')">Save Schedule Webhook</button>
+                            </div>
+                        </div>
+                        
+                        <div class="webhook-triggers">
+                            <h3>Send Webhooks</h3>
+                            
+                            <div class="webhook-trigger-section">
+                                <h4>📊 Standings Webhook</h4>
+                                <p>Send current standings table to Discord with movement arrows</p>
+                                <div class="webhook-matchday-form">
+                                    <div>
+                                        <label>Current Matchday (optional):</label>
+                                        <input 
+                                            type="number" 
+                                            id="webhook-standings-matchday" 
+                                            placeholder="Leave empty for current"
+                                            min="1"
+                                            max="31"
+                                        />
+                                    </div>
+                                    <button onclick="sendStandingsWebhook()" class="webhook-btn">
+                                        <i class="fas fa-trophy"></i> Send Standings to Discord
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="webhook-trigger-section">
+                                <h4>📅 Matchday Schedule Webhook</h4>
+                                <p>Send matchday schedule to Discord</p>
+                                <div class="webhook-matchday-form">
+                                    <label>Select Matchday:</label>
+                                    <input 
+                                        type="number" 
+                                        id="webhook-matchday" 
+                                        placeholder="Enter matchday number"
+                                        min="1"
+                                        max="31"
+                                    />
+                                    <button onclick="sendMatchdayWebhook()" class="webhook-btn">
+                                        <i class="fas fa-calendar-alt"></i> Send Schedule to Discord
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="webhook-trigger-section">
+                                <h4>🖼️ Image Webhooks</h4>
+                                <p>Send generated images to Discord</p>
+                                <div class="webhook-matchday-form">
+                                    <div>
+                                        <label>Matchday for Standings Image (optional):</label>
+                                        <input 
+                                            type="number" 
+                                            id="webhook-image-matchday" 
+                                            placeholder="Leave empty for current"
+                                            min="1"
+                                            max="31"
+                                        />
+                                    </div>
+                                    <button onclick="sendStandingsImageWebhook()" class="webhook-btn">
+                                        <i class="fas fa-image"></i> Send Standings Image
+                                    </button>
+                                </div>
+                                <div class="webhook-matchday-form" style="margin-top: 15px;">
+                                    <div>
+                                        <label>Top Players Limit:</label>
+                                        <input 
+                                            type="number" 
+                                            id="webhook-leaderboard-limit" 
+                                            placeholder="10"
+                                            value="10"
+                                            min="5"
+                                            max="25"
+                                        />
+                                    </div>
+                                    <button onclick="sendLeaderboardImageWebhook()" class="webhook-btn">
+                                        <i class="fas fa-medal"></i> Send Leaderboard Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        id="admin-tab-toornament"
+                        class="tab-content"
+                        style="display: none"
+                    >
+                        <h2>Toornament Integration</h2>
+                        <p class="webhook-info">Connect and manage your Toornament tournaments</p>
+                        
+                        <div class="toornament-section">
+                            <h3>Current Tournament</h3>
+                            <div id="current-tournament-display" class="current-tournament">
+                                <p>No tournament selected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="toornament-section">
+                            <h3>Select Tournament</h3>
+                            <button onclick="loadToornamentTournaments()" class="add-btn">
+                                <i class="fas fa-sync"></i> Load My Tournaments
+                            </button>
+                            <div id="toornament-list" class="toornament-list"></div>
+                        </div>
+                        
+                        <div class="toornament-section" id="toornament-data-section" style="display: none;">
+                            <h3>Tournament Data</h3>
+                            <div class="toornament-actions">
+                                <button onclick="viewToornamentStages()" class="action-btn">
+                                    <i class="fas fa-layer-group"></i> View Stages
+                                </button>
+                                <button onclick="viewToornamentStandings()" class="action-btn">
+                                    <i class="fas fa-trophy"></i> View Standings
+                                </button>
+                                <button onclick="viewToornamentMatches()" class="action-btn">
+                                    <i class="fas fa-gamepad"></i> View Matches
+                                </button>
+                                <button onclick="viewToornamentParticipants()" class="action-btn">
+                                    <i class="fas fa-users"></i> View Participants
+                                </button>
+                            </div>
+                            <div id="toornament-data-display" class="toornament-data"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <div class="footer-content">
+                    <p>Sideswipe Championship League • Season 1</p>
+                    <p>Hosted by VELOX • Powered by Toornament</p>
+                    <div class="social-links">
+                        <a
+                            href="https://discord.gg/TmxsYm5eb9"
+                            target="_blank"
+                            aria-label="Discord"
+                            ><i class="fab fa-discord"></i
+                        ></a>
+                        <a
+                            href="https://www.tiktok.com/@rls.championship?_r=1&_t=ZT-91d8YmYiRy3"
+                            target="_blank"
+                            aria-label="TikTok"
+                            ><i class="fab fa-tiktok"></i
+                        ></a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+
+        <script src="js/admin.js"></script>
+    </body>
+</html>
